@@ -27,7 +27,7 @@ message_template = ("Your top users list for r/%(subreddit_name)s from "
 user_rank = {}
 
 # sample user_rank for testing purposes; remove later
-user_rank = {'a': 1, 'c': 3, 'd': 4, 'b': 2, 'f': 6, 'e': 5}
+#user_rank = {'a': 1, 'c': 3, 'd': 4, 'b': 2, 'f': 6, 'e': 5}
 
 
 # adds top 10 (or all if total users < 10) users to top_users
@@ -65,13 +65,46 @@ def message_send(top_users):
 
 
 # goes through comments and posts and adds to user scores if the comments/posts are 12+ hours old
-# *@ unfinished
-# *$ write function
-'''
+# *@ should work
+# *$ figure out formula for participation score
 def tally(untallied_comments, untallied_submissions):
+
+    # ***Testing***
+    print("Tallying scores for 12+ hours old comments/posts")
+    starting_comments_len = len(untallied_comments)
+    starting_submissions_len = len(untallied_submissions)
+    # ***Testing***
+
     for counter, id in enumerate(untallied_comments):
-        if 
-'''
+        id = reddit.comment(id) # creates comment object out of id number
+        if time.time() - id.created_utc > (43200): # 12 hours in seconds
+            if id.author not in user_rank:
+                user_rank[id.author] = 0
+            user_rank[id.author] += id.score # currently just uses number of upvotes as points to add to participation score
+        else:
+            # remove already tallied items
+            untallied_comments = untallied_comments[counter:]
+            break
+    for counter, id in enumerate(untallied_submissions):
+        id = reddit.submission(id) # creates submission object out of id number
+        if time.time() - id.created_utc > (43200): # 12 hours in seconds
+            if id.author not in user_rank:
+                user_rank[id.author] = 0
+            user_rank[id.author] += id.score # currently just uses number of upvotes as points to add to participation score
+        else:
+            # remove already tallied items
+            untallied_submissions = untallied_submissions[counter:]
+            break
+
+    # ***Testing***
+    ending_comments_len = len(untallied_comments)
+    ending_submissions_len = len(untallied_submissions)
+    print('tallied comments: ' + str(starting_comments_len-ending_comments_len))
+    print('tallied submissions: ' + str(starting_submissions_len-ending_submissions_len))
+    # ***Testing***
+
+    return untallied_comments, untallied_submissions
+
 
 
 untallied_comments = []
@@ -100,9 +133,7 @@ while True:
     # and updates user_rank
     # untallied_comments and untallied_submissions are updated to remove items
     # after they have been tallied
-    # remove * after tally() has been finished
-    # *$ finish tally() and remove # on line below
-    # user_rank, untallied_comments, untallied_submissions = tally()
+    untallied_comments, untallied_submissions = tally(untallied_comments, untallied_submissions)
 
     for comment in comment_stream:
         if comment is None:
