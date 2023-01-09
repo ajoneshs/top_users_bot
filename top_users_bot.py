@@ -22,6 +22,9 @@ subreddit = reddit.subreddit(subreddit_name)
 message_template = ("Your top users list for r/%(subreddit_name)s from "
                     "%(month)s is ready. \n\n")
 
+message_template2 = ("\n\nThis bot was created by u/ajoneshs. Please PM him ",
+                     "if you have any questions or have found a bug.")
+
 
 # will be populated with usernames and their participation score
 user_rank = {}
@@ -59,12 +62,16 @@ def top_users(user_rank):
 # *@ should work
 def message_send(top_users):
     # might want to change message to have rank preceding username (i.e. 1: user1 \n 2: user2...)
-    message = message_template % {'subreddit_name': subreddit_name, 'month': active_month} + '\n'.join(top_users)
+    message = (message_template 
+              % {'subreddit_name': subreddit_name, 'month': active_month} 
+              + '\n'.join(top_users) 
+              + message_template2)
     print(message)
     # add ability to send this message to mods
 
 
-# goes through comments and posts and adds to user scores if the comments/posts are 12+ hours old
+# goes through comments and posts and adds to user scores if the 
+# comments/posts are 12+ hours old
 # *@ should work
 # *$ figure out formula for participation score
 def tally(untallied_comments, untallied_submissions):
