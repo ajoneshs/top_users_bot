@@ -19,10 +19,10 @@ subreddit_name = "a"
 subreddit = reddit.subreddit(subreddit_name)
 
 # creates the template for the bot to send in its monthly message
-message_template = ("Your top users list for r/%(subreddit_name)s from "
-                    "%(month)s is ready. \n\n")
+message_body_template = ("Your top users list for r/%(subreddit_name)s from "
+                         "%(month)s is ready. \n")
 
-message_template2 = ("\n\nThis bot was created by u/ajoneshs. Please PM him ",
+message_footer = ("\n\nThis bot was created by u/ajoneshs. Please PM him "
                      "if you have any questions or have found a bug.")
 
 
@@ -30,7 +30,7 @@ message_template2 = ("\n\nThis bot was created by u/ajoneshs. Please PM him ",
 user_rank = {}
 
 # sample user_rank for testing purposes; remove later
-#user_rank = {'a': 1, 'c': 3, 'd': 4, 'b': 2, 'f': 6, 'e': 5}
+# user_rank = {'a': 1, 'c': 3, 'd': 4, 'b': 2, 'f': 6, 'e': 5, 'h': 11, 'i': 2, 'j': 12, 'k': 4, 'l': 6, 'm': 7, 'n': 3}
 
 
 # adds top 10 (or all if total users < 10) users to top_users
@@ -61,11 +61,15 @@ def top_users(user_rank):
 # currently just prints message instead of sending it
 # *@ should work
 def message_send(top_users):
-    # might want to change message to have rank preceding username (i.e. 1: user1 \n 2: user2...)
-    message = (message_template 
-              % {'subreddit_name': subreddit_name, 'month': active_month} 
-              + '\n'.join(top_users) 
-              + message_template2)
+
+    message_body = message_body_template % {'subreddit_name': subreddit_name, 
+                                            'month': active_month}
+    formatted_list = []
+    for rank, user in enumerate(top_users):
+        formatted_list += "\n{}. {}".format(rank + 1, user)
+    
+    message = message_body + formatted_list + message_footer
+
     print(message)
     # add ability to send this message to mods
 
