@@ -23,8 +23,16 @@ message_body_template = ("Your top users list for r/%(subreddit_name)s from "
                          "%(month)s is ready. \n")
 
 message_footer = ("\n\nThis bot was created by u/ajoneshs. Please PM him "
-                     "if you have any questions or have found a bug.")
+                  "if you have any questions or have found a bug.")
 
+username = reddit.user.me()
+
+startup_message = (f"top_users_bot is running. You will receive a list of the "
+                   f"top 10 users on the first of each month. This bot is "
+                   f"being run by u/{username}.")
+
+# sends startup modmail message to show the bot is running
+subreddit.message(startup_message + message_footer)
 
 # will be populated with usernames and their participation score
 user_rank = {}
